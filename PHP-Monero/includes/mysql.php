@@ -3,7 +3,7 @@ function query($query, $fa = false) {
 	global $connection;
 	$result = mysql_query($query, $connection);
 	if ($fa) {
-		mysql_fetch_array($result);
+		fetch_array($result);
 	}
 	else return $result;
 }
