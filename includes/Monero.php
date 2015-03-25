@@ -160,9 +160,11 @@ class PHP_Monero
      */
     public function create_payment_address(float $xmr = 0.0)
     {        
-        // @TODO
-        // explain why this is multiplied
-        $amount = $xmr * 1000000000000;
+        // Wallet only supports integers, so we must
+        // calculate by $xmr * 10^12 and then round down
+        // any remaining decimals to the nearest integer.
+        $amount =  floor($xmr * 1000000000000);
+        $amount =  (int) $amount;
         
         // Generate the values
         $payment_id = $this->create_payment_id();        
@@ -175,7 +177,7 @@ class PHP_Monero
                                 VALUES (\'receive\', ?,?,\'pending\', ?)'
                                 )
         ) {
-            $stmt->bind_param('sss', $payment_id, $amount, $expire);
+            $stmt->bind_param('sis', $payment_id, $amount, $expire);
             $stmt->execute();
 
             // Commit and return on success
@@ -229,9 +231,11 @@ class PHP_Monero
             return false;
         }
 
-        // @TODO
-        // Seriously, what is with this?
-        $amount = $xmr * 1000000000000;
+        // Wallet only supports integers, so we must
+        // calculate by $xmr * 10^12 and then round down
+        // any remaining decimals to the nearest integer.
+        $amount = round($xmr * 1000000000000);
+        $amount = (int) $amount
         
         // Make sure we are actually transferring something
         if ($amount == 0) {
@@ -244,7 +248,7 @@ class PHP_Monero
         if ($stmt = $this->mysqli->prepare('INSERT INTO `xmr_payments` (`type`, `address`, `amount`, `status`)
                                             VALUES (\'transfer\', ?, ?, \'pending\')')
         ) {
-            $stmt->bind_param('sd', $address, $amount);
+            $stmt->bind_param('si', $address, $amount);
             $stmt->execute();
 
             // Check result & return
@@ -573,3 +577,5 @@ class PHP_Monero
 
         return true;    
     }
+
+}
