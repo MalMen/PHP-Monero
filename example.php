@@ -28,7 +28,7 @@ $transfer = $MoneroAPI->transfer('address', 5);
 
 /** Did that work? *//
 if (!$transfer) {
-    echo 'Didn\'t think so <br />';
+    echo 'Didn\'t think so. "Address" is not a valid address :P <br />';
 } else {
     echo ($transfer["amount"]/12) . " XMR will be sent to $transfer[address] <br />";
 }
@@ -36,5 +36,5 @@ if (!$transfer) {
 
 /** The below methods should be added to your Cron Jobs */
 $MoneroAPI->client_receive(); // procceing receipts
-xmr_client_transfer();	// processing transfers
+$MoneroAPI->client_transfer();	// processing transfers
 
